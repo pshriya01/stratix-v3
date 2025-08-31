@@ -1,7 +1,7 @@
 import { Box, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
-const StatsCardContainer = styled(Box)<{ borderColor: string }>(({ theme, borderColor }) => ({
+const StatsCardContainer = styled(Box, { shouldForwardProp: (prop) => prop !== 'borderColor' })<{ borderColor: string }>(({ theme, borderColor }) => ({
   display: 'flex',
   height: '111px',
   padding: '16px',
