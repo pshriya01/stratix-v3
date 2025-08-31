@@ -109,7 +109,7 @@ export interface HeaderProps {
 export default function Header({
   onLogoClick,
   onSearchChange,
-  onPostCampaignClick,
+  onFindWorkClick,
   onMessagesClick,
   onNotificationsClick,
   onProfileClick,
