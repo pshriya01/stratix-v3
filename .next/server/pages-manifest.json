@@ -4,6 +4,5 @@
   "/_document": "pages/_document.js",
   "/": "pages/index.js",
   "/brands": "pages/brands.js",
-  "/brands/[id]": "pages/brands/[id].js",
   "/brand-onboarding": "pages/brand-onboarding.js"
 }
