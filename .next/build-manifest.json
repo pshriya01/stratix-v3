@@ -28,30 +28,15 @@
       "static/chunks/main.js",
       "static/chunks/pages/_error.js"
     ],
-    "/brands/[id]": [
+    "/brand-onboarding": [
       "static/chunks/webpack.js",
       "static/chunks/main.js",
-      "static/chunks/pages/brands/[id].js"
+      "static/chunks/pages/brand-onboarding.js"
     ],
-    "/influencer-onboarding": [
+    "/brands": [
       "static/chunks/webpack.js",
       "static/chunks/main.js",
-      "static/chunks/pages/influencer-onboarding.js"
-    ],
-    "/login": [
-      "static/chunks/webpack.js",
-      "static/chunks/main.js",
-      "static/chunks/pages/login.js"
-    ],
-    "/onboarding": [
-      "static/chunks/webpack.js",
-      "static/chunks/main.js",
-      "static/chunks/pages/onboarding.js"
-    ],
-    "/signup": [
-      "static/chunks/webpack.js",
-      "static/chunks/main.js",
-      "static/chunks/pages/signup.js"
+      "static/chunks/pages/brands.js"
     ]
   },
   "ampFirstPages": []

@@ -70,13 +70,13 @@ const StepHeader = styled(Box)(({ theme }) => ({
   borderBottom: '1px solid #DFDFDF'
 }));
 
-const StepIndicator = styled(Box)<{ active?: boolean }>(({ theme, active }) => ({
+const StepIndicator = styled(Box, { shouldForwardProp: (prop) => prop !== 'active' })<{ active?: boolean }>(({ theme, active }) => ({
   display: 'flex',
   alignItems: 'center',
   gap: '8px'
 }));
 
-const StepNumber = styled(Box)<{ active?: boolean }>(({ theme, active }) => ({
+const StepNumber = styled(Box, { shouldForwardProp: (prop) => prop !== 'active' })<{ active?: boolean }>(({ theme, active }) => ({
   display: 'flex',
   width: '24px',
   height: '24px',
@@ -93,7 +93,7 @@ const StepNumber = styled(Box)<{ active?: boolean }>(({ theme, active }) => ({
   fontFamily: 'Poppins, -apple-system, Roboto, Helvetica, sans-serif'
 }));
 
-const StepTitle = styled(Typography)<{ active?: boolean }>(({ theme, active }) => ({
+const StepTitle = styled(Typography, { shouldForwardProp: (prop) => prop !== 'active' })<{ active?: boolean }>(({ theme, active }) => ({
   color: active ? '#2B2B2B' : '#1E002B',
   fontSize: '14px',
   fontWeight: 400,

@@ -3,7 +3,7 @@ import { Card, Typography, Box } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
-const StyledCard = styled(Card)<{ selected?: boolean }>(({ theme, selected }) => ({
+const StyledCard = styled(Card, { shouldForwardProp: (prop) => prop !== 'selected' })<{ selected?: boolean }>(({ theme, selected }) => ({
   width: '368px',
   padding: '24px',
   display: 'flex',

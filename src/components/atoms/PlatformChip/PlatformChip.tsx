@@ -3,7 +3,7 @@ import { styled } from '@mui/material/styles';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import SocialMediaIcon, { SocialPlatform } from '../SocialMediaIcon/SocialMediaIcon';
 
-const StyledChip = styled(Chip)<{ selected?: boolean; platformcolor?: string }>(({ theme, selected, platformcolor }) => ({
+const StyledChip = styled(Chip, { shouldForwardProp: (prop) => prop !== 'selected' && prop !== 'platformcolor' })<{ selected?: boolean; platformcolor?: string }>(({ theme, selected, platformcolor }) => ({
   display: 'flex',
   height: '32px',
   justifyContent: 'center',

@@ -17,7 +17,7 @@ const StepperBar = styled(Box)(({ theme }) => ({
   width: '100%',
 }));
 
-const StepLine = styled(Box)<{ active?: boolean }>(({ theme, active }) => ({
+const StepLine = styled(Box, { shouldForwardProp: (prop) => prop !== 'active' })<{ active?: boolean }>(({ theme, active }) => ({
   width: '78.8px',
   height: '1px',
   background: active ? '#3F214C' : '#CFCFCF',
