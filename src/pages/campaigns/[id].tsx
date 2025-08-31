@@ -2,7 +2,6 @@ import { useState } from 'react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { GetServerSideProps } from 'next';
-import { Box } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import Header from '../../components/organisms/Header/Header';
 import Footer from '../../components/organisms/Footer/Footer';
@@ -13,10 +12,17 @@ const PageContainer = styled('div')({
   flexDirection: 'column',
   alignItems: 'flex-start',
   background: 'linear-gradient(0deg, rgba(250, 249, 246, 0.70) 0%, rgba(250, 249, 246, 0.70) 100%), linear-gradient(106deg, rgba(235, 188, 254, 0.30) 0%, rgba(240, 196, 105, 0.30) 100%), #FFF',
-  minHeight: '100vh',
+  position: 'absolute',
+  left: '0px',
+  top: '0px',
+  height: '2034px',
   margin: '0 auto',
   maxWidth: '100vw',
-  overflow: 'hidden'
+  '@media (max-width: 1920px)': {
+    width: '100vw',
+    height: 'auto',
+    position: 'relative'
+  }
 });
 
 const ContentContainer = styled('div')({
@@ -25,10 +31,16 @@ const ContentContainer = styled('div')({
   flexDirection: 'column',
   alignItems: 'center',
   gap: '10px',
-  alignSelf: 'stretch'
+  alignSelf: 'stretch',
+  '@media (max-width: 1440px)': {
+    padding: '26px 120px'
+  },
+  '@media (max-width: 768px)': {
+    padding: '26px 20px'
+  }
 });
 
-const BackButtonContainer = styled('div')({
+const BackButton = styled('div')({
   display: 'flex',
   alignItems: 'center',
   gap: '4px',
@@ -56,7 +68,14 @@ const MainCard = styled('div')({
   flexDirection: 'column',
   alignItems: 'flex-start',
   borderRadius: '8px',
-  background: '#FFF'
+  background: '#FFF',
+  '@media (max-width: 1440px)': {
+    width: '100%',
+    maxWidth: '1200px'
+  },
+  '@media (max-width: 768px)': {
+    padding: '16px 16px'
+  }
 });
 
 const CampaignHeader = styled('div')({
@@ -102,7 +121,10 @@ const CampaignContent = styled('div')({
 const MainContent = styled('div')({
   display: 'flex',
   alignItems: 'flex-start',
-  alignSelf: 'stretch'
+  alignSelf: 'stretch',
+  '@media (max-width: 1024px)': {
+    flexDirection: 'column'
+  }
 });
 
 const LeftColumn = styled('div')({
@@ -112,7 +134,14 @@ const LeftColumn = styled('div')({
   alignItems: 'flex-start',
   gap: '16px',
   flex: '1 0 0',
-  borderRight: '1px solid #DFDFDF'
+  borderRight: '1px solid #DFDFDF',
+  '@media (max-width: 1024px)': {
+    paddingRight: '0',
+    borderRight: 'none',
+    borderBottom: '1px solid #DFDFDF',
+    paddingBottom: '24px',
+    marginBottom: '24px'
+  }
 });
 
 const CampaignTitleSection = styled('div')({
@@ -122,7 +151,10 @@ const CampaignTitleSection = styled('div')({
   flexDirection: 'column',
   alignItems: 'flex-start',
   gap: '8px',
-  borderBottom: '1px solid #DFDFDF'
+  borderBottom: '1px solid #DFDFDF',
+  '@media (max-width: 1200px)': {
+    width: '100%'
+  }
 });
 
 const CampaignTitle = styled('div')({
@@ -131,14 +163,18 @@ const CampaignTitle = styled('div')({
   fontFamily: 'Poppins, -apple-system, Roboto, Helvetica, sans-serif',
   fontSize: '33px',
   fontWeight: 400,
-  lineHeight: 'normal'
+  lineHeight: 'normal',
+  '@media (max-width: 768px)': {
+    fontSize: '28px'
+  }
 });
 
 const MetaInfo = styled('div')({
   display: 'flex',
   alignItems: 'center',
   gap: '8px',
-  alignSelf: 'stretch'
+  alignSelf: 'stretch',
+  flexWrap: 'wrap'
 });
 
 const MetaText = styled('div')({
@@ -280,7 +316,11 @@ const AttachmentCard = styled('div')({
   alignItems: 'flex-start',
   gap: '10px',
   borderRadius: '8px',
-  border: '1px solid #DFDFDF'
+  border: '1px solid #DFDFDF',
+  '@media (max-width: 768px)': {
+    width: '100%',
+    minWidth: '280px'
+  }
 });
 
 const AttachmentContainer = styled('div')({
@@ -347,7 +387,10 @@ const RightColumn = styled('div')({
   flexDirection: 'column',
   alignItems: 'flex-start',
   gap: '24px',
-  background: '#FFF'
+  background: '#FFF',
+  '@media (max-width: 1024px)': {
+    padding: '24px 0'
+  }
 });
 
 const ActionButtons = styled('div')({
@@ -423,7 +466,8 @@ const ApplyText = styled('div')({
 const InfoSection = styled('div')({
   display: 'flex',
   alignItems: 'center',
-  gap: '16px'
+  gap: '16px',
+  flexWrap: 'wrap'
 });
 
 const LocationIcon = styled('svg')({
@@ -567,7 +611,8 @@ const LinkUrl = styled('div')({
 
 const CopyIcon = styled('svg')({
   width: '24px',
-  height: '24px'
+  height: '24px',
+  cursor: 'pointer'
 });
 
 const SimilarCampaignsSection = styled('div')({
@@ -647,7 +692,11 @@ const CampaignMainInfo = styled('div')({
   display: 'flex',
   justifyContent: 'space-between',
   alignItems: 'flex-start',
-  alignSelf: 'stretch'
+  alignSelf: 'stretch',
+  '@media (max-width: 768px)': {
+    flexDirection: 'column',
+    gap: '16px'
+  }
 });
 
 const CampaignInfoLeft = styled('div')({
@@ -724,7 +773,8 @@ const CampaignFooter = styled('div')({
   display: 'flex',
   alignItems: 'center',
   gap: '16px',
-  alignSelf: 'stretch'
+  alignSelf: 'stretch',
+  flexWrap: 'wrap'
 });
 
 const LocationText = styled('div')({
@@ -913,12 +963,12 @@ export default function CampaignDetail({ campaignId }: CampaignDetailProps) {
 
         <ContentContainer>
           {/* Back Button */}
-          <BackButtonContainer onClick={handleBack}>
+          <BackButton onClick={handleBack}>
             <BackIcon viewBox="0 0 24 24" fill="none">
               <path d="M14 18L8 12L14 6L15.4 7.4L10.8 12L15.4 16.6L14 18Z" fill="#676767"/>
             </BackIcon>
             <BackText>Back to campaign listing</BackText>
-          </BackButtonContainer>
+          </BackButton>
 
           <MainCard>
             <CampaignHeader>
@@ -1096,7 +1146,7 @@ export default function CampaignDetail({ campaignId }: CampaignDetailProps) {
                         <LinkContainer>
                           <LinkUrlContainer>
                             <LinkUrl>{mockCampaignData.campaignLink}</LinkUrl>
-                            <CopyIcon viewBox="0 0 24 24" fill="none" onClick={handleCopyLink} style={{ cursor: 'pointer' }}>
+                            <CopyIcon viewBox="0 0 24 24" fill="none" onClick={handleCopyLink}>
                               <path d="M9 18C8.45 18 7.97917 17.8042 7.5875 17.4125C7.19583 17.0208 7 16.55 7 16V4C7 3.45 7.19583 2.97917 7.5875 2.5875C7.97917 2.19583 8.45 2 9 2H18C18.55 2 19.0208 2.19583 19.4125 2.5875C19.8042 2.97917 20 3.45 20 4V16C20 16.55 19.8042 17.0208 19.4125 17.4125C19.0208 17.8042 18.55 18 18 18H9ZM9 16H18V4H9V16ZM5 22C4.45 22 3.97917 21.8042 3.5875 21.4125C3.19583 21.0208 3 20.55 3 20V6H5V20H16V22H5Z" fill="#676767"/>
                             </CopyIcon>
                           </LinkUrlContainer>
@@ -1153,7 +1203,7 @@ export default function CampaignDetail({ campaignId }: CampaignDetailProps) {
                           }}>
                             <SaveButtonContent>
                               <SaveIcon viewBox="0 0 18 18" fill="none">
-                                <path d="M9 15.7498L7.9125 14.7748C6.65 13.6373 5.60625 12.6561 4.78125 11.8311C3.95625 11.0061 3.3 10.2654 2.8125 9.60918C2.325 8.95293 1.98438 8.3498 1.79063 7.7998C1.59688 7.2498 1.5 6.6873 1.5 6.1123C1.5 4.9373 1.89375 3.95605 2.68125 3.16855C3.46875 2.38105 4.45 1.9873 5.625 1.9873C6.275 1.9873 6.89375 2.1248 7.48125 2.3998C8.06875 2.6748 8.575 3.0623 9 3.5623C9.425 3.0623 9.93125 2.6748 10.5188 2.3998C11.1063 2.1248 11.725 1.9873 12.375 1.9873C13.55 1.9873 14.5313 2.38105 15.3188 3.16855C16.1063 3.95605 16.5 4.9373 16.5 6.1123C16.5 6.6873 16.4031 7.2498 16.2094 7.7998C16.0156 8.3498 15.675 8.95293 15.1875 9.60918C14.7 10.2654 14.0437 11.0061 13.2188 11.8311C12.3938 12.6561 11.35 13.6373 10.0875 14.7748L9 15.7498ZM9 13.7248C10.2 12.6498 11.1875 11.7279 11.9625 10.9592C12.7375 10.1904 13.35 9.52168 13.8 8.95293C14.25 8.38418 14.5625 7.87793 14.7375 7.43418C14.9125 6.99043 15 6.5498 15 6.1123C15 5.3623 14.75 4.7373 14.25 4.2373C13.75 3.7373 13.125 3.4873 12.375 3.4873C11.7875 3.4873 11.2437 3.65293 10.7437 3.98418C10.2437 4.31543 9.9 4.7373 9.7125 5.2498H8.2875C8.1 4.7373 7.75625 4.31543 7.25625 3.98418C6.75625 3.65293 6.2125 3.4873 5.625 3.4873C4.875 3.4873 4.25 3.7373 3.75 4.2373C3.25 4.7373 3 5.3623 3 6.1123C3 6.5498 3.0875 6.99043 3.2625 7.43418C3.4375 7.87793 3.75 8.38418 4.2 8.95293C4.65 9.52168 5.2625 10.1904 6.0375 10.9592C6.8125 11.7279 7.8 12.6498 9 13.7248Z" fill="#783C91"/>
+                                <path d="M9 15.7498L7.9125 14.7748C6.65 13.6373 5.60625 12.6561 4.78125 11.8311C3.95625 11.0061 3.3 10.2654 2.8125 9.60918C2.325 8.95293 1.98438 8.3498 1.79063 7.7998C1.59688 7.2498 1.5 6.6873 1.5 6.1123C1.5 4.9373 1.89375 3.95605 2.68125 3.16855C3.46875 2.38105 4.45 1.9873 5.625 1.9873C6.275 1.9873 6.89375 2.1248 7.48125 2.3998C8.06875 2.6748 8.575 3.0623 9 3.5623C9.425 3.0623 9.93125 2.6748 10.5188 2.3998C11.1063 2.1248 11.725 1.9873 12.375 1.9873C13.55 1.9873 14.5313 2.38105 15.3188 3.16855C16.1063 3.95605 16.5 4.9373 16.5 6.1123C16.5 6.6873 16.4031 7.2498 16.2094 7.7998C16.0156 8.3498 15.675 8.95293 15.1875 9.60918C14.7 10.2654 14.0437 11.0061 13.2188 11.8311C12.3938 12.6561 11.35 13.6373 10.0875 14.7748L9 15.7498ZM9 13.7248C10.2 12.6498 11.1875 11.7279 11.9625 10.9592C12.7375 10.1904 13.35 9.52168 13.8 8.95293C14.25 8.38418 14.5625 7.87793 14.7375 7.43418C14.9125 6.99043 15 6.5498 15 6.1123C15 5.3623 14.75 4.7373 14.25 4.2373C13.75 3.7373 13.125 3.4873 12.375 3.4873C11.7875 3.4873 11.2437 3.65293 10.7437 3.98418C10.2437 4.31543 9.9 4.7373 9.7125 5.2498H8.2875C8.1 4.7373 7.75625 4.31543 7.25625 3.98418C6.75625 3.65293 6.2125 3.4873 5.625 3.4873C4.875 3.4873 4.25 3.7373 3.75 4.7373C3.25 4.7373 3 5.3623 3 6.1123C3 6.5498 3.0875 6.99043 3.2625 7.43418C3.4375 7.87793 3.75 8.38418 4.2 8.95293C4.65 9.52168 5.2625 10.1904 6.0375 10.9592C6.8125 11.7279 7.8 12.6498 9 13.7248Z" fill="#783C91"/>
                               </SaveIcon>
                             </SaveButtonContent>
                           </SaveButton>
