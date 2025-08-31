@@ -29,16 +29,6 @@ globalThis.__BUILD_MANIFEST = {
       "static/chunks/webpack.js",
       "static/chunks/main.js",
       "static/chunks/pages/influencer-onboarding.js"
-    ],
-    "/onboarding": [
-      "static/chunks/webpack.js",
-      "static/chunks/main.js",
-      "static/chunks/pages/onboarding.js"
-    ],
-    "/signup": [
-      "static/chunks/webpack.js",
-      "static/chunks/main.js",
-      "static/chunks/pages/signup.js"
     ]
   },
   "ampFirstPages": []

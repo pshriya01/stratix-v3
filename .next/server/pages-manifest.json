@@ -3,7 +3,6 @@
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
   "/": "pages/index.js",
-  "/signup": "pages/signup.js",
   "/onboarding": "pages/onboarding.js",
   "/influencer-onboarding": "pages/influencer-onboarding.js"
 }
