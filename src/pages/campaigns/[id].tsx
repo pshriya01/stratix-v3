@@ -1,40 +1,30 @@
 import { useState } from 'react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import Link from 'next/link';
+import { GetServerSideProps } from 'next';
 import { 
   Box, 
   Typography, 
   Button, 
-  Avatar, 
-  Tabs, 
-  Tab, 
-  IconButton,
-  TextField,
   Chip,
-  Divider
+  IconButton
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import EditIcon from '@mui/icons-material/Edit';
-import CheckIcon from '@mui/icons-material/Check';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import VerifiedIcon from '@mui/icons-material/Verified';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import FlagIcon from '@mui/icons-material/Flag';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
-import VerifiedIcon from '@mui/icons-material/Verified';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import Header from '../../components/organisms/Header/Header';
 import Footer from '../../components/organisms/Footer/Footer';
-import PlatformChip from '../../components/atoms/PlatformChip/PlatformChip';
-import CampaignCard from '../../components/molecules/CampaignCard/CampaignCard';
-import { SocialPlatform } from '../../components/atoms/SocialMediaIcon/SocialMediaIcon';
+import SocialMediaIcon, { SocialPlatform } from '../../components/atoms/SocialMediaIcon/SocialMediaIcon';
 
 const PageContainer = styled(Box)(({ theme }) => ({
   minHeight: '100vh',
-  background: `linear-gradient(0deg, rgba(250, 249, 246, 0.70) 0%, rgba(250, 249, 246, 0.70) 100%),
-               linear-gradient(106deg, rgba(235, 188, 254, 0.30) 0%, rgba(240, 196, 105, 0.30) 100%),
+  background: `linear-gradient(0deg, rgba(250, 249, 246, 0.70) 0%, rgba(250, 249, 246, 0.70) 100%), 
+               linear-gradient(106deg, rgba(235, 188, 254, 0.30) 0%, rgba(240, 196, 105, 0.30) 100%), 
                #FFF`,
   display: 'flex',
   flexDirection: 'column'
@@ -58,34 +48,46 @@ const ContentContainer = styled(Box)(({ theme }) => ({
   }
 }));
 
-const BackNavigation = styled(Box)(({ theme }) => ({
+const BackButton = styled(Box)(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   gap: '4px',
   alignSelf: 'stretch',
-  marginBottom: '10px'
-}));
-
-const BackLink = styled(Typography)(({ theme }) => ({
-  color: '#783C91',
-  fontSize: '14px',
-  fontWeight: 600,
-  fontFamily: 'Poppins, -apple-system, Roboto, Helvetica, sans-serif',
-  lineHeight: 'normal',
   cursor: 'pointer',
+  marginBottom: '16px',
   '&:hover': {
-    textDecoration: 'underline'
+    '& .back-text': {
+      textDecoration: 'underline'
+    }
   }
 }));
 
-const CampaignContainer = styled(Box)(({ theme }) => ({
+const BackText = styled(Typography)(({ theme }) => ({
+  color: '#783C91',
+  fontFamily: 'Poppins, -apple-system, Roboto, Helvetica, sans-serif',
+  fontSize: '14px',
+  fontWeight: 600,
+  lineHeight: 'normal'
+}));
+
+const MainCard = styled(Box)(({ theme }) => ({
   display: 'flex',
   width: '1440px',
   padding: '16px 32px',
   flexDirection: 'column',
   alignItems: 'flex-start',
   borderRadius: '8px',
-  backgroundColor: '#FFF'
+  background: '#FFF',
+  [theme.breakpoints.down('lg')]: {
+    width: '100%',
+    maxWidth: '1200px'
+  },
+  [theme.breakpoints.down('md')]: {
+    padding: '16px 24px'
+  },
+  [theme.breakpoints.down('sm')]: {
+    padding: '16px 16px'
+  }
 }));
 
 const CampaignHeader = styled(Box)(({ theme }) => ({
@@ -101,29 +103,27 @@ const BrandSection = styled(Box)(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   gap: '10px',
-  alignSelf: 'stretch'
+  alignSelf: 'stretch',
+  marginBottom: '16px'
 }));
 
-const BrandInfo = styled(Box)(({ theme }) => ({
-  display: 'flex',
-  flexDirection: 'column',
-  justifyContent: 'center',
-  alignItems: 'flex-start',
-  gap: '6px',
-  flex: '1 0 0',
-  alignSelf: 'stretch'
+const BrandAvatar = styled('img')(({ theme }) => ({
+  width: '40px',
+  height: '40px',
+  borderRadius: '168px',
+  border: '5px solid #FFF'
 }));
 
 const BrandName = styled(Typography)(({ theme }) => ({
   color: '#1E002B',
   textAlign: 'center',
+  fontFamily: 'Poppins, -apple-system, Roboto, Helvetica, sans-serif',
   fontSize: '14px',
   fontWeight: 600,
-  fontFamily: 'Poppins, -apple-system, Roboto, Helvetica, sans-serif',
   lineHeight: 'normal'
 }));
 
-const CampaignDetails = styled(Box)(({ theme }) => ({
+const CampaignContent = styled(Box)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'flex-start',
@@ -154,85 +154,84 @@ const CampaignTitleSection = styled(Box)(({ theme }) => ({
   flexDirection: 'column',
   alignItems: 'flex-start',
   gap: '8px',
-  borderBottom: '1px solid #DFDFDF'
-}));
-
-const TitleRow = styled(Box)(({ theme }) => ({
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
-  gap: '8px'
-}));
-
-const CampaignTitle = styled(TextField)(({ theme }) => ({
-  alignSelf: 'stretch',
-  '& .MuiOutlinedInput-root': {
-    borderRadius: '4px',
-    '& fieldset': {
-      borderColor: '#AA86B9'
-    }
-  },
-  '& .MuiInputLabel-root': {
-    color: '#3F214C',
-    fontSize: '12px'
-  },
-  '& .MuiOutlinedInput-input': {
-    color: '#1E002B',
-    fontSize: '14px',
-    fontFamily: 'Poppins, -apple-system, Roboto, Helvetica, sans-serif'
+  borderBottom: '1px solid #DFDFDF',
+  [theme.breakpoints.down('lg')]: {
+    width: '100%'
   }
 }));
 
-const StatusRow = styled(Box)(({ theme }) => ({
+const CampaignTitle = styled(Typography)(({ theme }) => ({
+  color: '#1E002B',
+  textAlign: 'center',
+  fontFamily: 'Poppins, -apple-system, Roboto, Helvetica, sans-serif',
+  fontSize: '33px',
+  fontWeight: 400,
+  lineHeight: 'normal',
+  [theme.breakpoints.down('md')]: {
+    fontSize: '28px'
+  },
+  [theme.breakpoints.down('sm')]: {
+    fontSize: '24px'
+  }
+}));
+
+const MetaInfo = styled(Box)(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   gap: '8px',
   alignSelf: 'stretch'
 }));
 
-const StatusText = styled(Typography)(({ theme }) => ({
+const MetaText = styled(Typography)(({ theme }) => ({
   color: '#676767',
+  fontFamily: 'Poppins, -apple-system, Roboto, Helvetica, sans-serif',
   fontSize: '12px',
   fontWeight: 400,
+  lineHeight: 'normal'
+}));
+
+const VerifiedSection = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  alignItems: 'center',
+  gap: '8px'
+}));
+
+const VerifiedText = styled(Typography)(({ theme }) => ({
+  color: '#676767',
+  textAlign: 'center',
   fontFamily: 'Poppins, -apple-system, Roboto, Helvetica, sans-serif',
+  fontSize: '12px',
+  fontWeight: 600,
   lineHeight: 'normal'
 }));
 
 const DescriptionSection = styled(Box)(({ theme }) => ({
   display: 'flex',
-  alignItems: 'flex-start',
-  gap: '8px',
-  alignSelf: 'stretch'
-}));
-
-const DescriptionText = styled(Typography)(({ theme }) => ({
-  flex: '1 0 0',
-  color: '#1E002B',
-  fontSize: '14px',
-  fontWeight: 400,
-  fontFamily: 'Poppins, -apple-system, Roboto, Helvetica, sans-serif',
-  lineHeight: 'normal'
-}));
-
-const SectionTitle = styled(Typography)(({ theme }) => ({
-  color: '#1E002B',
-  textAlign: 'center',
-  fontSize: '24px',
-  fontWeight: 600,
-  fontFamily: 'Poppins, -apple-system, Roboto, Helvetica, sans-serif',
-  lineHeight: 'normal'
-}));
-
-const PlatformSection = styled(Box)(({ theme }) => ({
-  display: 'flex',
-  paddingTop: '24px',
   flexDirection: 'column',
   alignItems: 'flex-start',
   gap: '8px',
   alignSelf: 'stretch'
 }));
 
-const PlatformGrid = styled(Box)(({ theme }) => ({
+const DescriptionText = styled(Typography)(({ theme }) => ({
+  alignSelf: 'stretch',
+  color: '#1E002B',
+  fontFamily: 'Poppins, -apple-system, Roboto, Helvetica, sans-serif',
+  fontSize: '14px',
+  fontWeight: 400,
+  lineHeight: 'normal'
+}));
+
+const SectionTitle = styled(Typography)(({ theme }) => ({
+  color: '#1E002B',
+  textAlign: 'center',
+  fontFamily: 'Poppins, -apple-system, Roboto, Helvetica, sans-serif',
+  fontSize: '24px',
+  fontWeight: 600,
+  lineHeight: 'normal'
+}));
+
+const PlatformChipsContainer = styled(Box)(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   alignContent: 'center',
@@ -241,31 +240,36 @@ const PlatformGrid = styled(Box)(({ theme }) => ({
   flexWrap: 'wrap'
 }));
 
-const TagsSection = styled(Box)(({ theme }) => ({
+const PlatformChip = styled(Chip)<{ platformcolor?: string }>(({ theme, platformcolor }) => ({
   display: 'flex',
-  paddingTop: '24px',
-  flexDirection: 'column',
-  alignItems: 'flex-start',
-  gap: '8px',
-  alignSelf: 'stretch'
+  height: '32px',
+  justifyContent: 'center',
+  alignItems: 'center',
+  borderRadius: '8px',
+  border: `1px solid ${platformcolor || '#EEBA3D'}`,
+  background: '#FFF',
+  '& .MuiChip-label': {
+    color: '#1E002B',
+    fontFamily: 'Poppins, -apple-system, Roboto, Helvetica, sans-serif',
+    fontSize: '14px',
+    fontWeight: 400,
+    lineHeight: 'normal',
+    paddingLeft: '8px',
+    paddingRight: '16px'
+  },
+  '& .MuiChip-icon': {
+    marginLeft: '16px',
+    marginRight: 0
+  }
 }));
 
 const TagsText = styled(Typography)(({ theme }) => ({
   alignSelf: 'stretch',
   color: '#1E002B',
+  fontFamily: 'Poppins, -apple-system, Roboto, Helvetica, sans-serif',
   fontSize: '18px',
   fontWeight: 400,
-  fontFamily: 'Poppins, -apple-system, Roboto, Helvetica, sans-serif',
   lineHeight: 'normal'
-}));
-
-const AttachmentsSection = styled(Box)(({ theme }) => ({
-  display: 'flex',
-  paddingTop: '24px',
-  flexDirection: 'column',
-  alignItems: 'flex-start',
-  gap: '8px',
-  alignSelf: 'stretch'
 }));
 
 const AttachmentsGrid = styled(Box)(({ theme }) => ({
@@ -277,10 +281,10 @@ const AttachmentsGrid = styled(Box)(({ theme }) => ({
   flexWrap: 'wrap'
 }));
 
-const AttachmentItem = styled(Box)(({ theme }) => ({
+const AttachmentCard = styled(Box)(({ theme }) => ({
   display: 'flex',
   width: '336px',
-  padding: '12px 16px',
+  padding: '16px',
   flexDirection: 'column',
   alignItems: 'flex-start',
   gap: '10px',
@@ -288,21 +292,23 @@ const AttachmentItem = styled(Box)(({ theme }) => ({
   border: '1px solid #DFDFDF'
 }));
 
-const AttachmentContent = styled(Box)(({ theme }) => ({
+const AttachmentOverlay = styled(Box)(({ theme }) => ({
   display: 'flex',
-  padding: '4px 0',
-  flexDirection: 'column',
-  justifyContent: 'flex-end',
-  alignItems: 'flex-start',
-  gap: '4px',
-  alignSelf: 'stretch'
+  padding: '2px 12px',
+  justifyContent: 'center',
+  alignItems: 'center',
+  gap: '10px',
+  borderRadius: '800px',
+  background: '#DFDFDF'
 }));
 
-const AttachmentLink = styled(Box)(({ theme }) => ({
-  display: 'flex',
-  alignItems: 'center',
-  gap: '8px',
-  alignSelf: 'stretch'
+const AttachmentLabel = styled(Typography)(({ theme }) => ({
+  color: '#783C91',
+  textAlign: 'center',
+  fontFamily: 'Poppins, -apple-system, Roboto, Helvetica, sans-serif',
+  fontSize: '10px',
+  fontWeight: 400,
+  lineHeight: 'normal'
 }));
 
 const AttachmentUrl = styled(Typography)(({ theme }) => ({
@@ -315,9 +321,9 @@ const AttachmentUrl = styled(Typography)(({ theme }) => ({
   color: '#676767',
   textOverflow: 'ellipsis',
   whiteSpace: 'nowrap',
+  fontFamily: 'Poppins, -apple-system, Roboto, Helvetica, sans-serif',
   fontSize: '14px',
   fontWeight: 400,
-  fontFamily: 'Poppins, -apple-system, Roboto, Helvetica, sans-serif',
   lineHeight: 'normal'
 }));
 
@@ -327,7 +333,10 @@ const RightColumn = styled(Box)(({ theme }) => ({
   flexDirection: 'column',
   alignItems: 'flex-start',
   gap: '24px',
-  backgroundColor: '#FFF'
+  background: '#FFF',
+  [theme.breakpoints.down('md')]: {
+    padding: '24px 0 24px 16px'
+  }
 }));
 
 const ActionButtons = styled(Box)(({ theme }) => ({
@@ -336,20 +345,56 @@ const ActionButtons = styled(Box)(({ theme }) => ({
   gap: '16px'
 }));
 
-const DetailsSection = styled(Box)(({ theme }) => ({
+const SaveButton = styled(Button)(({ theme }) => ({
+  height: '41px',
+  borderRadius: '100px',
+  border: '1px solid #783C91',
+  padding: '10px 24px 10px 16px',
+  color: '#783C91',
+  fontFamily: 'Poppins, -apple-system, Roboto, Helvetica, sans-serif',
+  fontSize: '14px',
+  fontWeight: 600,
+  textTransform: 'uppercase',
+  '&:hover': {
+    backgroundColor: 'rgba(120, 60, 145, 0.04)'
+  }
+}));
+
+const ApplyButton = styled(Button)(({ theme }) => ({
+  height: '41px',
+  borderRadius: '100px',
+  background: '#783C91',
+  color: '#FFF',
+  fontFamily: 'Poppins, -apple-system, Roboto, Helvetica, sans-serif',
+  fontSize: '14px',
+  fontWeight: 600,
+  textTransform: 'uppercase',
+  padding: '10px 24px',
+  '&:hover': {
+    background: '#5F2E75'
+  }
+}));
+
+const InfoSection = styled(Box)(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   gap: '16px'
 }));
 
-const DetailItem = styled(Typography)(({ theme }) => ({
+const InfoText = styled(Typography)(({ theme }) => ({
+  fontFamily: 'Poppins, -apple-system, Roboto, Helvetica, sans-serif',
   fontSize: '14px',
   fontWeight: 600,
-  fontFamily: 'Poppins, -apple-system, Roboto, Helvetica, sans-serif',
   lineHeight: 'normal'
 }));
 
-const InfoSection = styled(Box)(({ theme }) => ({
+const Separator = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+    <path fillRule="evenodd" clipRule="evenodd" d="M12 20L12 4H14L14 20H12Z" fill="#676767"/>
+  </svg>
+);
+
+const DetailSection = styled(Box)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'flex-start',
@@ -357,48 +402,47 @@ const InfoSection = styled(Box)(({ theme }) => ({
   alignSelf: 'stretch'
 }));
 
-const InfoTitle = styled(Typography)(({ theme }) => ({
-  color: '#1E002B',
-  textAlign: 'center',
-  fontSize: '18px',
-  fontWeight: 600,
-  fontFamily: 'Poppins, -apple-system, Roboto, Helvetica, sans-serif',
-  lineHeight: 'normal'
-}));
-
-const InfoRow = styled(Box)(({ theme }) => ({
+const DetailItem = styled(Box)(({ theme }) => ({
   display: 'flex',
   alignItems: 'flex-start',
   gap: '8px',
   alignSelf: 'stretch'
 }));
 
-const InfoLabel = styled(Typography)(({ theme }) => ({
+const DetailLabel = styled(Typography)(({ theme }) => ({
   flex: '1 0 0',
   color: '#1E002B',
+  fontFamily: 'Poppins, -apple-system, Roboto, Helvetica, sans-serif',
   fontSize: '14px',
   fontWeight: 400,
-  fontFamily: 'Poppins, -apple-system, Roboto, Helvetica, sans-serif',
   lineHeight: 'normal'
 }));
 
-const InfoValue = styled(Typography)(({ theme }) => ({
+const DetailValue = styled(Typography)(({ theme }) => ({
   color: '#1E002B',
+  fontFamily: 'Poppins, -apple-system, Roboto, Helvetica, sans-serif',
   fontSize: '14px',
   fontWeight: 600,
-  fontFamily: 'Poppins, -apple-system, Roboto, Helvetica, sans-serif',
   lineHeight: 'normal'
 }));
 
-const CampaignLinkSection = styled(Box)(({ theme }) => ({
+const ReportSection = styled(Box)(({ theme }) => ({
   display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'flex-start',
+  alignItems: 'center',
   gap: '8px',
-  alignSelf: 'stretch'
+  cursor: 'pointer'
 }));
 
-const LinkContainer = styled(Box)(({ theme }) => ({
+const ReportText = styled(Typography)(({ theme }) => ({
+  color: '#783C91',
+  textAlign: 'center',
+  fontFamily: 'Poppins, -apple-system, Roboto, Helvetica, sans-serif',
+  fontSize: '14px',
+  fontWeight: 600,
+  lineHeight: 'normal'
+}));
+
+const LinkCard = styled(Box)(({ theme }) => ({
   display: 'flex',
   padding: '16px',
   flexDirection: 'column',
@@ -409,24 +453,14 @@ const LinkContainer = styled(Box)(({ theme }) => ({
   border: '1px solid #DFDFDF'
 }));
 
-const LinkContent = styled(Box)(({ theme }) => ({
-  display: 'flex',
-  padding: '4px 0',
-  flexDirection: 'column',
-  justifyContent: 'flex-end',
-  alignItems: 'flex-start',
-  gap: '4px',
-  alignSelf: 'stretch'
-}));
-
-const LinkRow = styled(Box)(({ theme }) => ({
+const LinkContainer = styled(Box)(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   gap: '8px',
   alignSelf: 'stretch'
 }));
 
-const LinkUrl = styled(Typography)(({ theme }) => ({
+const LinkText = styled(Typography)(({ theme }) => ({
   display: 'flex',
   height: '16px',
   flexDirection: 'column',
@@ -436,460 +470,488 @@ const LinkUrl = styled(Typography)(({ theme }) => ({
   color: '#676767',
   textOverflow: 'ellipsis',
   whiteSpace: 'nowrap',
+  fontFamily: 'Poppins, -apple-system, Roboto, Helvetica, sans-serif',
   fontSize: '14px',
   fontWeight: 400,
-  fontFamily: 'Poppins, -apple-system, Roboto, Helvetica, sans-serif',
   lineHeight: 'normal'
 }));
 
-const TabsContainer = styled(Box)(({ theme }) => ({
+const SimilarCampaignsSection = styled(Box)(({ theme }) => ({
   display: 'flex',
-  alignItems: 'center',
-  alignSelf: 'stretch',
-  borderBottom: '1px solid #DFDFDF'
-}));
-
-const SortContainer = styled(Box)(({ theme }) => ({
-  display: 'flex',
-  justifyContent: 'flex-end',
-  alignItems: 'center',
-  gap: '24px',
-  flex: '1 0 0'
-}));
-
-const FilterContainer = styled(Box)(({ theme }) => ({
-  display: 'flex',
-  alignItems: 'center',
-  gap: '8px'
-}));
-
-const SortLabel = styled(Typography)(({ theme }) => ({
-  color: '#1E002B',
-  fontSize: '14px',
-  fontWeight: 400,
-  fontFamily: 'Poppins, -apple-system, Roboto, Helvetica, sans-serif',
-  lineHeight: 'normal'
-}));
-
-const SortOption = styled(Box)(({ theme }) => ({
-  display: 'flex',
-  alignItems: 'center',
-  gap: '4px'
-}));
-
-const SortText = styled(Typography)(({ theme }) => ({
-  color: '#1E002B',
-  fontSize: '14px',
-  fontWeight: 600,
-  fontFamily: 'Poppins, -apple-system, Roboto, Helvetica, sans-serif',
-  lineHeight: 'normal'
-}));
-
-const CampaignsList = styled(Box)(({ theme }) => ({
-  display: 'flex',
+  paddingTop: '40px',
   flexDirection: 'column',
-  alignItems: 'flex-start',
+  alignItems: 'center',
   alignSelf: 'stretch'
 }));
 
-const SeeMoreContainer = styled(Box)(({ theme }) => ({
+const SimilarCampaignCard = styled(Box)(({ theme }) => ({
   display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
-  gap: '4px',
-  marginTop: '16px'
+  padding: '16px 8px 24px 8px',
+  flexDirection: 'column',
+  alignItems: 'flex-start',
+  gap: '10px',
+  alignSelf: 'stretch',
+  borderBottom: '1px solid #DFDFDF',
+  background: '#FFF'
 }));
 
-const SeeMoreLink = styled(Typography)(({ theme }) => ({
-  color: '#783C91',
-  fontSize: '14px',
-  fontWeight: 600,
-  fontFamily: 'Poppins, -apple-system, Roboto, Helvetica, sans-serif',
-  lineHeight: 'normal',
-  cursor: 'pointer',
-  '&:hover': {
-    textDecoration: 'underline'
-  }
-}));
+const platformColors: Record<SocialPlatform, string> = {
+  youtube: '#F00',
+  facebook: '#0080FF',
+  instagram: '#EEBA3D',
+  tiktok: '#020202',
+  x: '#1E002B'
+};
 
-// Mock data
-const mockCampaign = {
-  id: 'campaign-1',
+const platformLabels: Record<SocialPlatform, string> = {
+  youtube: 'YouTube',
+  facebook: 'Facebook',
+  instagram: 'Instagram',
+  tiktok: 'TikTok',
+  x: 'X'
+};
+
+// Mock campaign data
+const mockCampaignData = {
+  id: '1',
   brandName: 'Brand name',
-  brandImage: 'https://api.builder.io/api/v1/image/assets/TEMP/b9e5504945a01223adf71a1ae579aa26040ae6ad?width=80',
-  campaignName: 'Sports product campaign posts',
-  description: `Turpis ex libero aliquam vulputate semper consectetur. Nunc accumsan diam hac purus, vel volutpat mauris. Vestibulum nunc feugiat phasellus tristique orci vitae efficitur duis. Maximus dis ante penatibus morbi lobortis neque duis pellentesque pharetra. Eu parturient habitant fusce non finibus ac. Class libero fringilla viverra; elit dictumst dui. Finibus consectetur et velit tempus sodales aptent fringilla praesent facilisi. Facilisi auctor donec praesent porta viverra lobortis per phasellus mollis.
-
-Rhoncus sed class ex quis; fermentum eros. Ex dapibus blandit mollis cubilia donec, proin interdum pretium. Blandit malesuada vehicula cursus dolor pretium vestibulum ornare per varius. Sit magnis faucibus massa rutrum aenean donec egestas; maximus congue. Ante malesuada pellentesque maecenas convallis malesuada lacinia curae. Dolor blandit morbi litora litora tellus lacus orci in. Proin vestibulum proin turpis ex nibh fames non.`,
-  tags: 'Lifestyle, Fashion, Beauty',
+  brandAvatar: 'https://api.builder.io/api/v1/image/assets/TEMP/b9e5504945a01223adf71a1ae579aa26040ae6ad?width=80',
+  campaignName: 'Campaign name',
+  timestamp: 'Posted 3 hours ago',
+  proposals: 'Over 100 applicants',
+  verified: true,
+  description: [
+    'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+    'Turpis ex libero aliquam vulputate semper consectetur. Nunc accumsan diam hac purus, vel volutpat mauris. Vestibulum nunc feugiat phasellus tristique orci vitae efficitur duis. Maximus dis ante penatibus morbi lobortis neque duis pellentesque pharetra. Eu parturient habitant fusce non finibus ac. Class libero fringilla viverra; elit dictumst dui. Finibus consectetur et velit tempus sodales aptent fringilla praesent facilisi. Facilisi auctor donec praesent porta viverra lobortis per phasellus mollis. Rhoncus sed class ex quis; fermentum eros. Ex dapibus blandit mollis cubilia donec, proin interdum pretium. Blandit malesuada vehicula cursus dolor pretium vestibulum ornare per varius. Sit magnis faucibus massa rutrum aenean donec egestas; maximus congue. Ante malesuada pellentesque maecenas convallis malesuada lacinia curae. Dolor blandit morbi litora litora tellus lacus orci in. Proin vestibulum proin turpis ex nibh fames non.'
+  ],
   platforms: ['youtube', 'facebook', 'instagram', 'tiktok', 'x'] as SocialPlatform[],
+  tags: 'Lifestyle, Fashion, Beauty',
   attachments: [
-    'https://www.stratix.com/campaign/brief',
-    'https://www.stratix.com/campaign/brief',
-    'https://www.stratix.com/campaign/brief'
+    { label: 'Brief', url: 'https://www.stratix.com/campaign/brief' },
+    { label: 'Brief', url: 'https://www.stratix.com/campaign/brief' },
+    { label: 'Brief', url: 'https://www.stratix.com/campaign/brief' }
   ],
   location: 'Bangalore',
   budget: '₹ 1,000',
-  timestamp: 'Posted 3 hours ago',
-  proposals: 'Over 100 applicants',
-  pricing: {
-    costPerView: '₹0.25'
-  },
-  requirements: {
-    minFollowers: '1,000',
-    duration: '60 days'
-  },
+  costPerView: '₹0.25',
+  minFollowers: '1,000',
+  duration: '60 days',
   campaignLink: 'https://www.camp_name.com/campaign/brief'
 };
 
-const mockCampaigns = [
+const mockSimilarCampaigns = [
   {
-    id: 'campaign-1',
+    id: '2',
     brandName: 'Brand name',
     campaignName: 'Campaign name',
     tags: 'Lifestyle, Fashion, Beauty',
     description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla...',
     location: 'Bangalore',
     budget: '₹ 1,000',
-    platforms: ['youtube', 'x', 'tiktok', 'instagram', 'facebook'] as const,
-    timestamp: 'Posted 3 hours ago'
+    platforms: ['youtube', 'x', 'tiktok', 'instagram', 'facebook'] as SocialPlatform[],
+    timestamp: 'Posted 3 hours ago',
+    avatar: 'https://api.builder.io/api/v1/image/assets/TEMP/a886c16b3b008955a2764cd226317cf690321858?width=120'
   },
   {
-    id: 'campaign-2',
+    id: '3',
     brandName: 'Brand name',
     campaignName: 'Campaign name',
     tags: 'Lifestyle, Fashion, Beauty',
     description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla...',
     location: 'Bangalore',
     budget: '₹ 1,000',
-    platforms: ['youtube', 'x', 'tiktok', 'instagram', 'facebook'] as const,
-    timestamp: 'Posted 3 hours ago'
+    platforms: ['youtube', 'x', 'tiktok', 'instagram', 'facebook'] as SocialPlatform[],
+    timestamp: 'Posted 3 hours ago',
+    avatar: 'https://api.builder.io/api/v1/image/assets/TEMP/a886c16b3b008955a2764cd226317cf690321858?width=120'
   },
   {
-    id: 'campaign-3',
+    id: '4',
     brandName: 'Brand name',
     campaignName: 'Campaign name',
     tags: 'Lifestyle, Fashion, Beauty',
     description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla...',
     location: 'Bangalore',
     budget: '₹ 1,000',
-    platforms: ['youtube', 'x', 'tiktok', 'instagram', 'facebook'] as const,
-    timestamp: 'Posted 3 hours ago'
+    platforms: ['youtube', 'x', 'tiktok', 'instagram', 'facebook'] as SocialPlatform[],
+    timestamp: 'Posted 3 hours ago',
+    avatar: 'https://api.builder.io/api/v1/image/assets/TEMP/a886c16b3b008955a2764cd226317cf690321858?width=120'
   }
 ];
 
-export default function CampaignDetailPage() {
+interface CampaignDetailProps {
+  campaignId: string;
+}
+
+export default function CampaignDetail({ campaignId }: CampaignDetailProps) {
   const router = useRouter();
-  const { id } = router.query;
-  const [activeTab, setActiveTab] = useState(0);
+  const [searchValue, setSearchValue] = useState('');
 
-  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
-    setActiveTab(newValue);
+  const handleBack = () => {
+    router.back();
   };
 
-  const handleEditCampaign = (campaignId: string) => {
-    console.log('Edit campaign:', campaignId);
+  const handleApply = () => {
+    console.log('Apply to campaign:', campaignId);
   };
 
-  const handleCampaignMenuAction = (action: string, campaignId: string) => {
-    console.log('Campaign action:', action, campaignId);
-  };
-
-  const handleBrandClick = (brandName: string) => {
-    router.push(`/brands/${brandName}`);
-  };
-
-  const handleCloseCampaign = () => {
-    console.log('Close campaign');
-  };
-
-  const handleReportCampaign = () => {
-    console.log('Report campaign');
+  const handleSave = () => {
+    console.log('Save campaign:', campaignId);
   };
 
   const handleCopyLink = () => {
-    navigator.clipboard.writeText(mockCampaign.campaignLink);
+    navigator.clipboard.writeText(mockCampaignData.campaignLink);
+  };
+
+  const handleSimilarCampaignClick = (id: string) => {
+    router.push(`/campaigns/${id}`);
   };
 
   return (
     <>
       <Head>
-        <title>{mockCampaign.campaignName} - Campaign Details - Social Stratix</title>
-        <meta name="description" content={`Campaign details for ${mockCampaign.campaignName}`} />
+        <title>{mockCampaignData.campaignName} - Social Stratix</title>
+        <meta name="description" content={`Campaign details for ${mockCampaignData.campaignName}`} />
       </Head>
       
       <PageContainer>
-        <Header hasNotifications={true} />
+        <Header 
+          searchValue={searchValue}
+          onSearchChange={setSearchValue}
+          hasNotifications={true}
+        />
 
         <ContentContainer>
-          {/* Back Navigation */}
-          <BackNavigation>
+          {/* Back Button */}
+          <BackButton onClick={handleBack}>
             <ArrowBackIcon sx={{ width: 24, height: 24, color: '#676767' }} />
-            <Link href={`/brands/${mockCampaign.brandName}`} style={{ textDecoration: 'none' }}>
-              <BackLink>Back to campaign listing</BackLink>
-            </Link>
-          </BackNavigation>
+            <BackText className="back-text">Back to campaign listing</BackText>
+          </BackButton>
 
-          {/* Campaign Container */}
-          <CampaignContainer>
+          <MainCard>
             <CampaignHeader>
+              {/* Brand Section */}
               <BrandSection>
-                <Avatar
-                  src={mockCampaign.brandImage}
-                  sx={{ width: 40, height: 40 }}
-                />
-                <BrandInfo>
-                  <BrandName>{mockCampaign.brandName}</BrandName>
-                </BrandInfo>
+                <BrandAvatar src={mockCampaignData.brandAvatar} alt={mockCampaignData.brandName} />
+                <BrandName>{mockCampaignData.brandName}</BrandName>
               </BrandSection>
 
-              <CampaignDetails>
+              <CampaignContent>
                 <MainContent>
                   <LeftColumn>
+                    {/* Campaign Title Section */}
                     <CampaignTitleSection>
-                      <TitleRow>
-                        <CampaignTitle
-                          label="Campaign name"
-                          value={mockCampaign.campaignName}
-                          variant="outlined"
-                          size="small"
-                          InputProps={{ readOnly: true }}
-                        />
-                        <Button
-                          variant="outlined"
-                          startIcon={<CheckIcon />}
-                          sx={{
-                            height: '40px',
-                            borderRadius: '100px',
-                            border: '1px solid #783C91',
-                            color: '#783C91',
-                            minWidth: 'auto',
-                            padding: '8px'
-                          }}
-                        />
-                      </TitleRow>
-
-                      <StatusRow>
-                        <StatusText>{mockCampaign.timestamp}</StatusText>
-                        <Divider orientation="vertical" flexItem />
-                        <StatusText>Proposal: {mockCampaign.proposals}</StatusText>
-                        <Divider orientation="vertical" flexItem />
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                          <VerifiedIcon sx={{ width: 24, height: 24, color: '#D9CF00' }} />
-                          <StatusText sx={{ fontWeight: 600 }}>Verified payment</StatusText>
-                        </Box>
-                      </StatusRow>
+                      <CampaignTitle>{mockCampaignData.campaignName}</CampaignTitle>
+                      <MetaInfo>
+                        <MetaText>{mockCampaignData.timestamp}</MetaText>
+                        <Separator />
+                        <MetaText>Proposal: {mockCampaignData.proposals}</MetaText>
+                        <Separator />
+                        {mockCampaignData.verified && (
+                          <VerifiedSection>
+                            <VerifiedIcon sx={{ width: 24, height: 24, color: '#D9CF00' }} />
+                            <VerifiedText>Verified payment</VerifiedText>
+                          </VerifiedSection>
+                        )}
+                      </MetaInfo>
                     </CampaignTitleSection>
 
+                    {/* Description */}
                     <DescriptionSection>
-                      <DescriptionText>{mockCampaign.description}</DescriptionText>
-                      <IconButton 
-                        sx={{ 
-                          border: '1px solid #783C91', 
-                          backgroundColor: '#FFF',
-                          width: 40, 
-                          height: 40,
-                          position: 'relative',
-                          top: -16,
-                          right: -24
-                        }}
-                      >
-                        <EditIcon sx={{ width: 18, height: 18, color: '#783C91' }} />
-                      </IconButton>
+                      {mockCampaignData.description.map((paragraph, index) => (
+                        <DescriptionText key={index}>{paragraph}</DescriptionText>
+                      ))}
                     </DescriptionSection>
 
-                    <PlatformSection>
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: '100px', width: '100%' }}>
-                        <SectionTitle>Post on</SectionTitle>
-                        <IconButton sx={{ border: '1px solid #783C91', backgroundColor: '#FFF', width: 40, height: 40 }}>
-                          <EditIcon sx={{ width: 18, height: 18, color: '#783C91' }} />
-                        </IconButton>
-                      </Box>
-                      <PlatformGrid>
-                        {mockCampaign.platforms.map((platform) => (
-                          <PlatformChip key={platform} platform={platform} />
+                    {/* Post On Section */}
+                    <Box sx={{ display: 'flex', paddingTop: '24px', flexDirection: 'column', alignItems: 'flex-start', gap: '8px', alignSelf: 'stretch' }}>
+                      <SectionTitle>Post on</SectionTitle>
+                      <PlatformChipsContainer>
+                        {mockCampaignData.platforms.map((platform) => (
+                          <PlatformChip
+                            key={platform}
+                            icon={<SocialMediaIcon platform={platform} />}
+                            label={platformLabels[platform]}
+                            platformcolor={platformColors[platform]}
+                          />
                         ))}
-                      </PlatformGrid>
-                    </PlatformSection>
+                      </PlatformChipsContainer>
+                    </Box>
 
-                    <TagsSection>
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: '55px', width: '100%' }}>
-                        <SectionTitle>Tag</SectionTitle>
-                        <IconButton sx={{ border: '1px solid #783C91', backgroundColor: '#FFF', width: 40, height: 40 }}>
-                          <EditIcon sx={{ width: 18, height: 18, color: '#783C91' }} />
-                        </IconButton>
-                      </Box>
-                      <TagsText>{mockCampaign.tags}</TagsText>
-                    </TagsSection>
+                    {/* Tags Section */}
+                    <Box sx={{ display: 'flex', paddingTop: '24px', flexDirection: 'column', alignItems: 'flex-start', gap: '8px', alignSelf: 'stretch' }}>
+                      <SectionTitle>Tag</SectionTitle>
+                      <TagsText>{mockCampaignData.tags}</TagsText>
+                    </Box>
 
-                    <AttachmentsSection>
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: '170px', width: '100%' }}>
-                        <SectionTitle>Attachments</SectionTitle>
-                        <IconButton sx={{ border: '1px solid #783C91', backgroundColor: '#FFF', width: 40, height: 40 }}>
-                          <EditIcon sx={{ width: 18, height: 18, color: '#783C91' }} />
-                        </IconButton>
-                      </Box>
+                    {/* Attachments Section */}
+                    <Box sx={{ display: 'flex', paddingTop: '24px', flexDirection: 'column', alignItems: 'flex-start', gap: '8px', alignSelf: 'stretch' }}>
+                      <SectionTitle>Attachments</SectionTitle>
                       <AttachmentsGrid>
-                        {mockCampaign.attachments.map((url, index) => (
-                          <AttachmentItem key={index}>
-                            <AttachmentContent>
-                              <AttachmentLink>
-                                <AttachmentUrl>{url}</AttachmentUrl>
-                                <OpenInNewIcon sx={{ width: 24, height: 24, color: '#676767' }} />
-                              </AttachmentLink>
-                            </AttachmentContent>
-                          </AttachmentItem>
+                        {mockCampaignData.attachments.map((attachment, index) => (
+                          <AttachmentCard key={index}>
+                            <Box sx={{ display: 'flex', padding: '4px 0', flexDirection: 'column', justifyContent: 'flex-end', alignItems: 'flex-start', gap: '4px', alignSelf: 'stretch' }}>
+                              <AttachmentOverlay>
+                                <AttachmentLabel>{attachment.label}</AttachmentLabel>
+                              </AttachmentOverlay>
+                              <Box sx={{ display: 'flex', alignItems: 'center', gap: '8px', alignSelf: 'stretch' }}>
+                                <AttachmentUrl>{attachment.url}</AttachmentUrl>
+                                <IconButton size="small">
+                                  <OpenInNewIcon sx={{ width: 18, height: 18, color: '#676767' }} />
+                                </IconButton>
+                              </Box>
+                            </Box>
+                          </AttachmentCard>
                         ))}
                       </AttachmentsGrid>
-                    </AttachmentsSection>
+                    </Box>
                   </LeftColumn>
 
                   <RightColumn>
+                    {/* Action Buttons */}
                     <ActionButtons>
-                      <Button
-                        variant="outlined"
-                        onClick={handleCloseCampaign}
-                        sx={{
-                          height: '41px',
-                          borderRadius: '100px',
-                          border: '1px solid #783C91',
-                          color: '#783C91',
-                          textTransform: 'uppercase',
-                          fontWeight: 700,
-                          fontSize: '14px'
-                        }}
+                      <SaveButton 
+                        startIcon={<FavoriteIcon />}
+                        onClick={handleSave}
                       >
-                        Close Campaign
-                      </Button>
-                      <IconButton
-                        sx={{
-                          height: '38px',
-                          width: '38px',
-                          border: '1px solid #783C91',
-                          borderRadius: '100px'
-                        }}
-                      >
-                        <MoreVertIcon sx={{ color: '#783C91' }} />
-                      </IconButton>
+                        Save
+                      </SaveButton>
+                      <ApplyButton onClick={handleApply}>
+                        Apply
+                      </ApplyButton>
                     </ActionButtons>
 
-                    <DetailsSection>
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <LocationOnIcon sx={{ width: 24, height: 24, color: '#676767' }} />
-                        <DetailItem sx={{ color: '#1E002B' }}>{mockCampaign.location}</DetailItem>
-                      </Box>
-                      <Divider orientation="vertical" flexItem />
-                      <DetailItem sx={{ color: '#1E002B' }}>Budget: {mockCampaign.budget}</DetailItem>
-                    </DetailsSection>
-
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                      <Link href={`/brands/${mockCampaign.brandName}`} style={{ textDecoration: 'none' }}>
-                        <Typography sx={{ color: '#783C91', fontSize: '12px', fontWeight: 600, cursor: 'pointer' }}>
-                          About Brand
-                        </Typography>
-                      </Link>
-                      <OpenInNewIcon sx={{ width: 18, height: 18, color: '#783C91' }} />
-                    </Box>
-
+                    {/* Location and Budget */}
                     <InfoSection>
-                      <InfoTitle>Pricing</InfoTitle>
-                      <InfoRow>
-                        <InfoLabel>Costs per view:</InfoLabel>
-                        <InfoValue>{mockCampaign.pricing.costPerView}</InfoValue>
-                      </InfoRow>
+                      <LocationOnIcon sx={{ width: 24, height: 24, color: '#676767' }} />
+                      <InfoText sx={{ color: '#1E002B' }}>{mockCampaignData.location}</InfoText>
+                      <Separator />
+                      <InfoText sx={{ color: '#1E002B' }}>
+                        Budget: <Box component="span" sx={{ color: '#1E002B' }}>{mockCampaignData.budget}</Box>
+                      </InfoText>
                     </InfoSection>
 
-                    <InfoSection>
-                      <InfoTitle>Requirements</InfoTitle>
-                      <InfoRow>
-                        <InfoLabel>Min number of followers:</InfoLabel>
-                        <InfoValue>{mockCampaign.requirements.minFollowers}</InfoValue>
-                      </InfoRow>
-                      <InfoRow>
-                        <InfoLabel>Duration:</InfoLabel>
-                        <InfoValue>{mockCampaign.requirements.duration}</InfoValue>
-                      </InfoRow>
-                    </InfoSection>
-
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <FlagIcon sx={{ width: 18, height: 18, color: '#783C91' }} />
-                      <Typography sx={{ color: '#783C91', fontSize: '14px', fontWeight: 600 }}>
-                        Report campaign
+                    {/* About Brand Link */}
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: '4px', cursor: 'pointer' }}>
+                      <Typography
+                        sx={{
+                          color: '#783C91',
+                          fontFamily: 'Poppins, -apple-system, Roboto, Helvetica, sans-serif',
+                          fontSize: '12px',
+                          fontWeight: 600,
+                          lineHeight: 'normal'
+                        }}
+                      >
+                        About Brand
                       </Typography>
+                      <OpenInNewIcon sx={{ width: 14, height: 14, color: '#783C91' }} />
                     </Box>
 
-                    <CampaignLinkSection>
-                      <InfoTitle>Campaign link</InfoTitle>
-                      <LinkContainer>
-                        <LinkContent>
-                          <LinkRow>
-                            <LinkUrl>{mockCampaign.campaignLink}</LinkUrl>
-                            <ContentCopyIcon 
-                              sx={{ width: 24, height: 24, color: '#676767', cursor: 'pointer' }} 
-                              onClick={handleCopyLink}
-                            />
-                          </LinkRow>
-                        </LinkContent>
-                      </LinkContainer>
-                    </CampaignLinkSection>
+                    {/* Pricing Section */}
+                    <DetailSection>
+                      <Typography
+                        sx={{
+                          color: '#1E002B',
+                          textAlign: 'center',
+                          fontFamily: 'Poppins, -apple-system, Roboto, Helvetica, sans-serif',
+                          fontSize: '18px',
+                          fontWeight: 600,
+                          lineHeight: 'normal'
+                        }}
+                      >
+                        Pricing
+                      </Typography>
+                      <DetailItem>
+                        <DetailLabel>Costs per view:</DetailLabel>
+                        <DetailValue>{mockCampaignData.costPerView}</DetailValue>
+                      </DetailItem>
+                    </DetailSection>
+
+                    {/* Requirements Section */}
+                    <DetailSection>
+                      <Typography
+                        sx={{
+                          color: '#1E002B',
+                          textAlign: 'center',
+                          fontFamily: 'Poppins, -apple-system, Roboto, Helvetica, sans-serif',
+                          fontSize: '18px',
+                          fontWeight: 600,
+                          lineHeight: 'normal'
+                        }}
+                      >
+                        Requirements
+                      </Typography>
+                      <DetailItem>
+                        <DetailLabel>Min number of followers:</DetailLabel>
+                        <DetailValue>{mockCampaignData.minFollowers}</DetailValue>
+                      </DetailItem>
+                      <DetailItem>
+                        <DetailLabel>Duration:</DetailLabel>
+                        <DetailValue>{mockCampaignData.duration}</DetailValue>
+                      </DetailItem>
+                    </DetailSection>
+
+                    {/* Report Campaign */}
+                    <ReportSection>
+                      <FlagIcon sx={{ width: 18, height: 18, color: '#783C91' }} />
+                      <ReportText>Report campaign</ReportText>
+                    </ReportSection>
+
+                    {/* Campaign Link */}
+                    <DetailSection>
+                      <Typography
+                        sx={{
+                          color: '#1E002B',
+                          textAlign: 'center',
+                          fontFamily: 'Poppins, -apple-system, Roboto, Helvetica, sans-serif',
+                          fontSize: '18px',
+                          fontWeight: 600,
+                          lineHeight: 'normal'
+                        }}
+                      >
+                        Campaign link
+                      </Typography>
+                      <LinkCard>
+                        <LinkContainer>
+                          <LinkText>{mockCampaignData.campaignLink}</LinkText>
+                          <IconButton onClick={handleCopyLink}>
+                            <ContentCopyIcon sx={{ width: 24, height: 24, color: '#676767' }} />
+                          </IconButton>
+                        </LinkContainer>
+                      </LinkCard>
+                    </DetailSection>
                   </RightColumn>
                 </MainContent>
-              </CampaignDetails>
+              </CampaignContent>
             </CampaignHeader>
-          </CampaignContainer>
+          </MainCard>
 
-          {/* Campaigns Section */}
-          <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', alignSelf: 'stretch', mt: 2 }}>
-            <TabsContainer>
-              <Tabs value={activeTab} onChange={handleTabChange}>
-                <Tab 
-                  label="Active Campaigns" 
-                  sx={{ 
-                    textTransform: 'none',
-                    fontWeight: activeTab === 0 ? 600 : 400,
-                    fontSize: '14px',
-                    color: '#1E002B'
-                  }} 
-                />
-                <Tab 
-                  label="Previous Campaigns" 
-                  sx={{ 
-                    textTransform: 'none',
-                    fontWeight: activeTab === 1 ? 600 : 400,
-                    fontSize: '14px',
-                    color: '#1E002B'
-                  }} 
-                />
-              </Tabs>
-              
-              <SortContainer>
-                <FilterContainer>
-                  <SortLabel>Sort by</SortLabel>
-                  <SortOption>
-                    <SortText>Date Posted</SortText>
-                    <KeyboardArrowDownIcon sx={{ width: 24, height: 24, color: '#676767' }} />
-                  </SortOption>
-                </FilterContainer>
-              </SortContainer>
-            </TabsContainer>
+          {/* Similar Campaigns Section */}
+          <SimilarCampaignsSection>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: '8px', alignSelf: 'stretch', marginBottom: '16px' }}>
+              <SectionTitle>Similar Campaigns</SectionTitle>
+            </Box>
 
-            <CampaignsList>
-              {mockCampaigns.map((campaign) => (
-                <CampaignCard
-                  key={campaign.id}
-                  {...campaign}
-                  onBrandClick={handleBrandClick}
-                  onEdit={handleEditCampaign}
-                  onMenuAction={handleCampaignMenuAction}
-                />
-              ))}
-            </CampaignsList>
+            {mockSimilarCampaigns.map((campaign) => (
+              <SimilarCampaignCard 
+                key={campaign.id}
+                onClick={() => handleSimilarCampaignClick(campaign.id)}
+                sx={{ cursor: 'pointer' }}
+              >
+                {/* Similar campaign content - simplified version of campaign card */}
+                <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: '11px', alignSelf: 'stretch' }}>
+                  <Box sx={{ display: 'flex', paddingTop: '20px', flexDirection: 'column', alignItems: 'center', gap: '10px', borderRadius: '100px' }}>
+                    <img 
+                      style={{ width: '60px', height: '60px', borderRadius: '168px', border: '2px solid #FFF' }}
+                      src={campaign.avatar} 
+                      alt={campaign.brandName} 
+                    />
+                  </Box>
+                  
+                  <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '8px', flex: '1 0 0' }}>
+                    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', alignSelf: 'stretch' }}>
+                      <Box sx={{ display: 'flex', height: '20px', alignItems: 'center', gap: '8px', alignSelf: 'stretch' }}>
+                        <MetaText>{campaign.timestamp}</MetaText>
+                      </Box>
+                      
+                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', alignSelf: 'stretch' }}>
+                        <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'flex-start', gap: '4px', flex: '1 0 0' }}>
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                            <BrandName sx={{ fontSize: '12px' }}>{campaign.brandName}</BrandName>
+                            <OpenInNewIcon sx={{ width: 14, height: 14, color: '#783C91' }} />
+                          </Box>
+                          <CampaignTitle sx={{ fontSize: '24px' }}>{campaign.campaignName}</CampaignTitle>
+                          <Typography sx={{ color: '#676767', fontSize: '14px' }}>{campaign.tags}</Typography>
+                        </Box>
 
-            <SeeMoreContainer>
-              <SeeMoreLink>See more</SeeMoreLink>
-              <KeyboardArrowDownIcon sx={{ width: 24, height: 24, color: '#783C91', transform: 'rotate(90deg)' }} />
-            </SeeMoreContainer>
-          </Box>
+                        <ActionButtons>
+                          <SaveButton 
+                            startIcon={<FavoriteIcon />}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleSave();
+                            }}
+                          >
+                            Save
+                          </SaveButton>
+                          <ApplyButton 
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleApply();
+                            }}
+                          >
+                            Apply
+                          </ApplyButton>
+                        </ActionButtons>
+                      </Box>
+                    </Box>
+
+                    <Box sx={{ display: 'flex', height: '34px', alignItems: 'flex-start', gap: '10px', alignSelf: 'stretch' }}>
+                      <Typography
+                        sx={{
+                          display: 'flex',
+                          flexDirection: 'column',
+                          justifyContent: 'center',
+                          flex: '1 0 0',
+                          alignSelf: 'stretch',
+                          overflow: 'hidden',
+                          color: '#1E002B',
+                          textOverflow: 'ellipsis',
+                          whiteSpace: 'nowrap',
+                          fontSize: '12px',
+                          fontWeight: 400
+                        }}
+                      >
+                        {campaign.description}
+                      </Typography>
+                    </Box>
+                  </Box>
+                </Box>
+
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: '16px', alignSelf: 'stretch' }}>
+                  <InfoText sx={{ color: '#1E002B' }}>
+                    Location: <Box component="span" sx={{ color: '#755002' }}>{campaign.location}</Box>
+                  </InfoText>
+                  <Separator />
+                  <InfoText sx={{ color: '#1E002B' }}>
+                    Budget: <Box component="span" sx={{ color: '#755002' }}>{campaign.budget}</Box>
+                  </InfoText>
+                  <Separator />
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <Typography sx={{ color: '#1E002B', fontSize: '14px', fontWeight: 600 }}>Post on:</Typography>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                      {campaign.platforms.map((platform) => (
+                        <SocialMediaIcon key={platform} platform={platform} />
+                      ))}
+                    </Box>
+                  </Box>
+                </Box>
+              </SimilarCampaignCard>
+            ))}
+
+            {/* See More */}
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '4px', cursor: 'pointer', padding: '16px' }}>
+              <Typography
+                sx={{
+                  color: '#783C91',
+                  fontFamily: 'Poppins, -apple-system, Roboto, Helvetica, sans-serif',
+                  fontSize: '14px',
+                  fontWeight: 600,
+                  lineHeight: 'normal'
+                }}
+              >
+                See more
+              </Typography>
+              <svg 
+                width="24" 
+                height="24" 
+                viewBox="0 0 24 24" 
+                fill="none" 
+                style={{ transform: 'rotate(90deg)' }}
+              >
+                <path d="M12 12.6L16.6 8L18 9.4L12 15.4L6 9.4L7.4 8L12 12.6Z" fill="#783C91"/>
+              </svg>
+            </Box>
+          </SimilarCampaignsSection>
         </ContentContainer>
 
         <Footer />
@@ -897,3 +959,13 @@ export default function CampaignDetailPage() {
     </>
   );
 }
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const { id } = context.query;
+  
+  return {
+    props: {
+      campaignId: id as string
+    }
+  };
+};
