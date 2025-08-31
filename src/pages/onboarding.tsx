@@ -59,7 +59,7 @@ const MainCard = styled(Box)(({ theme }) => ({
   width: '100%',
 }));
 
-const SelectionCard = styled(Card)<{ selected?: boolean }>(({ theme, selected }) => ({
+const SelectionCard = styled(Card, { shouldForwardProp: (prop) => prop !== 'selected' })<{ selected?: boolean }>(({ theme, selected }) => ({
   width: '368px',
   padding: '24px',
   display: 'flex',
@@ -90,7 +90,7 @@ const CheckIcon = styled(CheckCircleIcon)(({ theme }) => ({
   fontSize: '24px',
 }));
 
-const ContinueButton = styled(Button)<{ enabled?: boolean }>(({ theme, enabled }) => ({
+const ContinueButton = styled(Button, { shouldForwardProp: (prop) => prop !== 'enabled' })<{ enabled?: boolean }>(({ theme, enabled }) => ({
   borderRadius: '100px',
   height: '41px',
   padding: '10px 24px',
