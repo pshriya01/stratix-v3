@@ -97,7 +97,7 @@ const StyledNotificationBadge = styled(Badge)(({ theme }) => ({
 export interface HeaderProps {
   onLogoClick?: () => void;
   onSearchChange?: (value: string) => void;
-  onPostCampaignClick?: () => void;
+  onFindWorkClick?: () => void;
   onMessagesClick?: () => void;
   onNotificationsClick?: () => void;
   onProfileClick?: () => void;
