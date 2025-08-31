@@ -3,6 +3,7 @@
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
   "/": "pages/index.js",
-  "/brands": "pages/brands.js",
-  "/brand-onboarding": "pages/brand-onboarding.js"
+  "/signup": "pages/signup.js",
+  "/onboarding": "pages/onboarding.js",
+  "/influencer-onboarding": "pages/influencer-onboarding.js"
 }
