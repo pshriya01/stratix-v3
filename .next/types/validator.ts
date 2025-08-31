@@ -75,6 +75,12 @@ type PagesPageConfig = {
   handler satisfies PagesPageConfig
 }
 
+// Validate ../../src/pages/influencers.tsx
+{
+  const handler = {} as typeof import("../../src/pages/influencers.js")
+  handler satisfies PagesPageConfig
+}
+
 // Validate ../../src/pages/influencers/[id].tsx
 {
   const handler = {} as typeof import("../../src/pages/influencers/[id].js")
