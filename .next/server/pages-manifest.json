@@ -3,8 +3,6 @@
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
   "/": "pages/index.js",
-  "/onboarding": "pages/onboarding.js",
-  "/influencer-onboarding": "pages/influencer-onboarding.js",
-  "/campaigns/[id]": "pages/campaigns/[id].js",
-  "/influencers": "pages/influencers.js"
+  "/influencers": "pages/influencers.js",
+  "/campaigns/[id]": "pages/campaigns/[id].js"
 }
