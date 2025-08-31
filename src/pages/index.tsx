@@ -54,6 +54,11 @@ export default function HomePage() {
                   Find Influencers
                 </Button>
               </Link>
+              <Link href="/influencers" passHref>
+                <Button variant="contained" size="large" sx={{ backgroundColor: '#DB9400', '&:hover': { backgroundColor: '#C7850A' } }}>
+                  Find Work
+                </Button>
+              </Link>
               <Link href="/login" passHref>
                 <Button variant="outlined" size="large">
                   Login
