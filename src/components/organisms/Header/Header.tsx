@@ -165,12 +165,12 @@ export default function Header({
           />
 
           {/* Navigation Links */}
-          <Link href="/post-campaign" style={{ textDecoration: 'none' }}>
+          <Link href="/influencers" style={{ textDecoration: 'none' }}>
             <NavLink>
-              Post Campaign
+              Find Work
             </NavLink>
           </Link>
-          
+
           <NavLink onClick={onMessagesClick}>
             Messages
           </NavLink>
