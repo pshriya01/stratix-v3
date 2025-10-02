@@ -25,15 +25,10 @@ globalThis.__BUILD_MANIFEST = {
       "static/chunks/main.js",
       "static/chunks/pages/_error.js"
     ],
-    "/brand-onboarding": [
+    "/campaigns/[id]": [
       "static/chunks/webpack.js",
       "static/chunks/main.js",
-      "static/chunks/pages/brand-onboarding.js"
-    ],
-    "/brands": [
-      "static/chunks/webpack.js",
-      "static/chunks/main.js",
-      "static/chunks/pages/brands.js"
+      "static/chunks/pages/campaigns/[id].js"
     ]
   },
   "ampFirstPages": []

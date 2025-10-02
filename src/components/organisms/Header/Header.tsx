@@ -97,7 +97,7 @@ const StyledNotificationBadge = styled(Badge)(({ theme }) => ({
 export interface HeaderProps {
   onLogoClick?: () => void;
   onSearchChange?: (value: string) => void;
-  onPostCampaignClick?: () => void;
+  onFindWorkClick?: () => void;
   onMessagesClick?: () => void;
   onNotificationsClick?: () => void;
   onProfileClick?: () => void;
@@ -109,7 +109,7 @@ export interface HeaderProps {
 export default function Header({
   onLogoClick,
   onSearchChange,
-  onPostCampaignClick,
+  onFindWorkClick,
   onMessagesClick,
   onNotificationsClick,
   onProfileClick,
@@ -165,12 +165,12 @@ export default function Header({
           />
 
           {/* Navigation Links */}
-          <Link href="/post-campaign" style={{ textDecoration: 'none' }}>
+          <Link href="/influencers" style={{ textDecoration: 'none' }}>
             <NavLink>
-              Post Campaign
+              Find Work
             </NavLink>
           </Link>
-          
+
           <NavLink onClick={onMessagesClick}>
             Messages
           </NavLink>
